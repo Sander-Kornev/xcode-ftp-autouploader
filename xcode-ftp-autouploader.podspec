@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "xcode-ftp-autouploader"
-  s.version      = "0.0.1-alpha"
+  s.version      = "0.0.2-alpha"
   s.summary      = ""
   s.description  = ""
   s.homepage     = "https://github.com/vlrebrov/xcode-ftp-autouploader"
