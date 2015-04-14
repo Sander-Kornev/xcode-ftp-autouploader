@@ -103,8 +103,8 @@ cp "${ICOPATH}" "${ICONNAME}"
 
 # upload files to FTP server
 ftp -n $HOST <<END_SCRIPT
-quote USER $USER
-quote PASS $PASSWD
+quote USER ${USER}
+quote PASS ${PASSWD}
 cd "projects"
 cd "${PROJECT}"
 mkdir "${FULL_VERSION}"
