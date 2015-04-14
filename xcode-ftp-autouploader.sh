@@ -10,19 +10,21 @@ if !(("$CONFIGURATION" == "Release")); then
     exit 0
 fi
 
+# FTP hostname
 HOST='<YOUR_HOST>'
+# FTP username
 USER='<YOUR_USERNAME>'
+# FTP password
 PASSWD='<YOUR_PASSWORD>'
+# name of project (on FTP)
 PROJECT='<YOUR_PROJECT>'
+# path to provision profile
+PROVISIONING_PROFILE="<PATH_TO_PROVISIONING_PROFILE>"
+# code signing identity
+DEVELOPER="<DEVELOPER_NAME>"
 
 # plist filename on FTP
 PLIST_FILENAME="${PROJECT}.plist"
-# path to provision profile
-# TODO: need to find way for automatically profile path found
-PROVISIONING_PROFILE="<PATH_TO_PROVISIONING_PROFILE>"
-# code signing identity
-#DEVELOPER="${CODE_SIGN_IDENTITY}"
-DEVELOPER="<DEVELOPER_NAME>"
 # current date for archive path
 DATE=$( /bin/date +"%Y-%m-%d" )
 # path to folder with archives
@@ -37,6 +39,8 @@ APP="${ARCHIVE_PATH}/${ARCHIVE}/Products/Applications/${PROJECT_NAME}.app"
 TMP_IPA="${PROJECT_NAME//[[:blank:]]/}.ipa"
 # path to info.plist file in archive
 INFOPLIST="${APP}/Info.plist"
+# path to application icon in archive
+ICOPATH="${APP}/AppIcon60x60@2x.png"
 # get version of application from info.plist file
 VERSION_NUM=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "${INFOPLIST}")
 # get build number of application from info.plist file
@@ -45,6 +49,8 @@ BUILD_NUM=$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" "${INFOPLIST}")
 BUNDLE_IDENTIFIER=$(/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" "${INFOPLIST}")
 # full version of application  - version(build). Warning: don't use spaces in this name.
 FULL_VERSION=$VERSION_NUM"("$BUILD_NUM")"
+# name of application icon on the server
+ICONNAME="appicon.png"
 
 # create IPA file
 /usr/bin/xcrun -sdk iphoneos PackageApplication -v "${APP}" -o "$(pwd)/${TMP_IPA}" --sign "${DEVELOPER}" --embed "${PROVISIONING_PROFILE}"
@@ -92,6 +98,9 @@ cat << EOF > "$(pwd)/${PLIST_FILENAME}"
 </plist>
 EOF
 
+# copy application icon
+cp "${ICOPATH}" "${ICONNAME}"
+
 # upload files to FTP server
 ftp -n $HOST <<END_SCRIPT
 quote USER $USER
@@ -100,8 +109,11 @@ cd "projects"
 cd "$PROJECT"
 mkdir "$FULL_VERSION"
 cd "$FULL_VERSION"
+binary
 put "$TMP_IPA"
 put "$PLIST_FILENAME"
+binary
+put "${ICONNAME}"
 quit
 END_SCRIPT
 
