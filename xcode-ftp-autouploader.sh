@@ -106,19 +106,20 @@ ftp -n $HOST <<END_SCRIPT
 quote USER $USER
 quote PASS $PASSWD
 cd "projects"
-cd "$PROJECT"
-mkdir "$FULL_VERSION"
-cd "$FULL_VERSION"
+cd "${PROJECT}"
+mkdir "${FULL_VERSION}"
+cd "${FULL_VERSION}"
 binary
-put "$TMP_IPA"
-put "$PLIST_FILENAME"
+put "${TMP_IPA}"
+put "${PLIST_FILENAME}"
 binary
 put "${ICONNAME}"
 quit
 END_SCRIPT
 
 # remove tmp-files
-rm "$PLIST_FILENAME"
-rm "$TMP_IPA"
+rm "${PLIST_FILENAME}"
+rm "${TMP_IPA}"
+rm "${ICONNAME}"
 
 exit 0
